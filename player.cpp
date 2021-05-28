@@ -78,6 +78,12 @@ void JuegoAleatorio(bool aplicables[], int opciones[], int &j)
    }
 }
 
+void poda_AlfaBeta(const Environment actual, Player jugador, int num_jugador,int PROFUNDIDAD_ALFABETA,Environment::ActionType accion, double alpha, double beta){
+
+
+
+}
+
 // Invoca el siguiente movimiento del jugador
 Environment::ActionType Player::Think()
 {
@@ -145,8 +151,6 @@ Environment::ActionType Player::Think()
    // NOTA: La parametrizacion es solo orientativa
    // valor = Poda_AlfaBeta(actual_, jugador_, 0, PROFUNDIDAD_ALFABETA, accion, alpha, beta);
    //cout << "Valor MiniMax: " << valor << "  Accion: " << actual_.ActionStr(accion) << endl;
-
-   
 
 
 
