@@ -9,8 +9,6 @@
 #include "conexion.h"
 
 
-
-
 int conexion_server::Crear_Servidor(){
 	 char error[200];
 char bienvenido[]="Bienvenido al server de las cuatro en raya.";
@@ -24,7 +22,7 @@ char bienvenido[]="Bienvenido al server de las cuatro en raya.";
     printf("\nIniciado Winsock, de windows XP\n");*/
 
     if((sock=socket(AF_INET,SOCK_STREAM,0))<0){ // creamos el socket
-    printf("Error creando el socket, saliendo…");
+    printf("Error creando el socket, saliendoï¿½");
     exit(0);
     }
     else
@@ -36,8 +34,8 @@ char bienvenido[]="Bienvenido al server de las cuatro en raya.";
     //server.sin_addr.s_addr=inet_addr("127.0.0.1");
     server.sin_port=htons(5127); //Puerto
 
-    if(bind(sock,(struct sockaddr *)&server,sizeof(server))<0 ){//bindeamos…
-    printf("error asociando socket al puerto…");exit(0);
+    if(bind(sock,(struct sockaddr *)&server,sizeof(server))<0 ){//bindeamosï¿½
+    printf("error asociando socket al puertoï¿½");exit(0);
     }
     else
     printf("Bind con exito\n");
@@ -111,7 +109,7 @@ char conexion_server::Recibir_Accion(){
    char aux;
 
    if((bytesrecv=recv(conectado,&aux,1,0))==-1){
-        printf("Error recibiendo accion, saliendo…");
+        printf("Error recibiendo accion, saliendoï¿½");
         exit(0);
     }
 
@@ -120,7 +118,7 @@ char conexion_server::Recibir_Accion(){
 
 void conexion_server::Enviar_Accion_al_Cliente(const char accion){
     if(send(conectado,(char*) &accion,1,0)<0){ // Envio Estado para jugador 1
-        printf("Error enviando accion al cliente, saliendo…");
+        printf("Error enviando accion al cliente, saliendoï¿½");
         exit(0);
     }
 }
@@ -241,7 +239,7 @@ char conexion_client::Recibir_Accion_del_Servidor(){
    char aux;
 
    if((bytesrecv=recv(sock,&aux,1,0))==-1){
-        printf("Error recibiendo accion, saliendo…");
+        printf("Error recibiendo accion, saliendoï¿½");
         exit(0);
     }
 
