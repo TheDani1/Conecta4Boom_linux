@@ -84,64 +84,71 @@ void JuegoAleatorio(bool aplicables[], int opciones[], int &j)
    }
 }
 
-double poda_AlfaBeta(Environment actual, Player jugador, int profundidad,int PROFUNDIDAD_ALFABETA,Environment::ActionType accion, double alpha, double beta){
+double poda_AlfaBeta(Environment actual, Player jugador, int depth,int PROFUNDIDAD_ALFABETA,Environment::ActionType accion, double alpha, double beta){
 
-   Environment::ActionType accion_t;
-   bool aplicables[8];
+   cout << "ALFABETA";
 
-   int depth = PROFUNDIDAD_ALFABETA;
-   int n_act = actual.possible_actions(aplicables);
+   Environment vectorE[8];
+   int n_act = actual.GenerateAllMoves(vectorE);
 
    double maxEval, minEval, eval;
-   int opciones[10];
-   int accion_actual;
 
-   if (depth == PROFUNDIDAD_ALFABETA or n_act == 0 or actual.JuegoTerminado() or actual.RevisarTablero() == 0 or actual.RevisarTablero() == 1 or actual.RevisarTablero() == 2){
+   if (depth == PROFUNDIDAD_ALFABETA or n_act == 0 or actual.JuegoTerminado()){
+
+      cout << "ADIOS " << ValoracionTest(actual, jugador.numJugador());
 
       return ValoracionTest(actual, jugador.numJugador());
 
    }
 
-   if(jugador.numJugador() == 1){
+   for(int i = 0; i < n_act; i++){
 
-      maxEval = -9999999999.0;
-      for(auto ap : aplicables){
+      eval = poda_AlfaBeta(vectorE[i], jugador, depth+1, PROFUNDIDAD_ALFABETA,accion, alpha, beta);
 
-         accion_t = static_cast<Environment::ActionType>(ap);
+      if(actual.JugadorActivo() == 1){
 
-         actual.AcceptAction(accion_t);
+         cout << "Jugador 1";
 
-         eval = poda_AlfaBeta(actual, jugador, profundidad+1, PROFUNDIDAD_ALFABETA, accion_t, alpha, beta);
+         maxEval = -9999999999.0;
+
          maxEval = max(maxEval,eval);
          alpha = max(alpha,eval);
-         if(beta <= alpha)
+
+         accion = static_cast<Environment::ActionType>(vectorE[i].Last_Action(jugador.numJugador()));
+
+         if(beta <= alpha){
+
             break;
-         return maxEval;
-
-      }
-
-   }else{
-
-         minEval = 9999999999.0;
-         for(auto ap : aplicables){
-
-            accion_t = static_cast<Environment::ActionType>(ap);
-
-            actual.AcceptAction(accion_t);
-
-            eval = poda_AlfaBeta(actual, jugador, profundidad+1, PROFUNDIDAD_ALFABETA, accion_t, alpha, beta);
-            minEval = min(minEval,eval);
-            beta = min(beta,eval);
-            if(beta <= alpha)
-               break;
-
-            return minEval;
 
          }
+
+         return maxEval;
+
+      }else{
+
+         cout << "Jugador 2";
+
+         minEval = 9999999999.0;
+
+         minEval = min(minEval,eval);
+         beta = min(beta,eval);
+
+         accion = static_cast<Environment::ActionType>(vectorE[i].Last_Action(jugador.numJugador()));
+
+         if(beta <= alpha){
+
+            break;
+
+         }
+         return minEval;
          
+      }
+
+
 
    }
 
+  
 
 }
 
