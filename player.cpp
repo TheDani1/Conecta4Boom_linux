@@ -15,6 +15,12 @@ Player::Player(int jug)
    jugador_ = jug;
 }
 
+int Player :: numJugador(){
+
+   return jugador_;
+
+}
+
 // Actualiza el estado del juego para el jugador
 void Player::Perceive(const Environment &env)
 {
@@ -78,8 +84,63 @@ void JuegoAleatorio(bool aplicables[], int opciones[], int &j)
    }
 }
 
-void poda_AlfaBeta(const Environment actual, Player jugador, int num_jugador,int PROFUNDIDAD_ALFABETA,Environment::ActionType accion, double alpha, double beta){
+double poda_AlfaBeta(Environment actual, Player jugador, int profundidad,int PROFUNDIDAD_ALFABETA,Environment::ActionType accion, double alpha, double beta){
 
+   Environment::ActionType accion_t;
+   bool aplicables[8];
+
+   int depth = PROFUNDIDAD_ALFABETA;
+   int n_act = actual.possible_actions(aplicables);
+
+   double maxEval, minEval, eval;
+   int opciones[10];
+   int accion_actual;
+
+   if (depth == PROFUNDIDAD_ALFABETA or n_act == 0 or actual.JuegoTerminado() or actual.RevisarTablero() == 0 or actual.RevisarTablero() == 1 or actual.RevisarTablero() == 2){
+
+      return ValoracionTest(actual, jugador.numJugador());
+
+   }
+
+   if(jugador.numJugador() == 1){
+
+      maxEval = -9999999999.0;
+      for(auto ap : aplicables){
+
+         accion_t = static_cast<Environment::ActionType>(ap);
+
+         actual.AcceptAction(accion_t);
+
+         eval = poda_AlfaBeta(actual, jugador, profundidad+1, PROFUNDIDAD_ALFABETA, accion_t, alpha, beta);
+         maxEval = max(maxEval,eval);
+         alpha = max(alpha,eval);
+         if(beta <= alpha)
+            break;
+         return maxEval;
+
+      }
+
+   }else{
+
+         minEval = 9999999999.0;
+         for(auto ap : aplicables){
+
+            accion_t = static_cast<Environment::ActionType>(ap);
+
+            actual.AcceptAction(accion_t);
+
+            eval = poda_AlfaBeta(actual, jugador, profundidad+1, PROFUNDIDAD_ALFABETA, accion_t, alpha, beta);
+            minEval = min(minEval,eval);
+            beta = min(beta,eval);
+            if(beta <= alpha)
+               break;
+
+            return minEval;
+
+         }
+         
+
+   }
 
 
 }
@@ -119,7 +180,7 @@ Environment::ActionType Player::Think()
    cout << endl;
 
    //--------------------- COMENTAR Desde aqui
-   cout << "\n\t";
+   /*cout << "\n\t";
    int n_opciones = 0;
    JuegoAleatorio(aplicables, opciones, n_opciones);
 
@@ -143,14 +204,15 @@ Environment::ActionType Player::Think()
       accion = static_cast<Environment::ActionType>(opciones[aleatorio]);
    }
 
+   */
    //--------------------- COMENTAR Hasta aqui
 
    //--------------------- AQUI EMPIEZA LA PARTE A REALIZAR POR EL ALUMNO ------------------------------------------------
 
    // Opcion: Poda AlfaBeta
    // NOTA: La parametrizacion es solo orientativa
-   // valor = Poda_AlfaBeta(actual_, jugador_, 0, PROFUNDIDAD_ALFABETA, accion, alpha, beta);
-   //cout << "Valor MiniMax: " << valor << "  Accion: " << actual_.ActionStr(accion) << endl;
+   valor = poda_AlfaBeta(actual_, jugador_, 0, PROFUNDIDAD_ALFABETA, accion, alpha, beta);
+   cout << "Valor MiniMax: " << valor << "  Accion: " << actual_.ActionStr(accion) << endl;
 
 
 
