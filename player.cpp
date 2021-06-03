@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <vector>
 #include <queue>
+#include <list>
 #include "player.h"
 #include "environment.h"
 
@@ -57,10 +58,81 @@ double ValoracionTest(const Environment &estado, int jugador)
 }
 
 // ------------------- Los tres metodos anteriores no se pueden modificar
+pair<int , int >sucesivosTablero(const Environment &tablero, int jugador){
+
+   list<pair<int, int>> posiciones_sucesivas_v;
+   list<pair<int, int>> posiciones_sucesivas_h;
+
+   list<pair<int, int>>::iterator it;
+
+   //ANALISIS
+   for(int c = 0; c < 7; c++){
+      for(int i = 0; i < 7; i++ ){
+
+
+         if(tablero.See_Casilla(i,c) == jugador){
+
+            posiciones_sucesivas_v.push_back(make_pair(i,c));
+
+         }else{
+
+            posiciones_sucesivas_v.clear();
+
+         }
+      
+      }
+
+   }
+
+   for(int i = 0; i < 7; i++){
+      for(int j = 0; j < 7; j++ ){
+
+         if(tablero.See_Casilla(i,j) == jugador){
+
+            posiciones_sucesivas_h.push_back(make_pair(i,j));
+
+         }else{
+
+            posiciones_sucesivas_h.clear();
+
+         }
+      
+      }
+
+   }
+
+   for(it = posiciones_sucesivas_v.begin(); it != posiciones_sucesivas_v.end(); it++){
+
+      cout << (*it).first << " " << (*it).second << endl;
+
+   }
+
+   for(it = posiciones_sucesivas_h.begin(); it != posiciones_sucesivas_h.end(); it++){
+
+      cout << (*it).first << " "<<(*it).second << endl;
+
+   }
+
+}
+
 
 // Funcion heuristica (ESTA ES LA QUE TENEIS QUE MODIFICAR)
-double Valoracion(const Environment &estado, int jugador)
-{
+double Valoracion(const Environment &estado, int jugador){
+
+   int ganador = estado.RevisarTablero();
+
+   if (ganador == jugador)
+      return 99999999.0; // Gana el jugador que pide la valoracion
+   else if (ganador != 0)
+      return -99999999.0; // Pierde el jugador que pide la valoracion
+   else if (estado.Get_Casillas_Libres()==0)
+            return 0;  // Hay un empate global y se ha rellenado completamente el tablero
+    else
+	{
+		sucesivosTablero(estado, jugador);
+	}
+
+
 }
 
 // Esta funcion no se puede usar en la version entregable
@@ -84,7 +156,7 @@ double poda_AlfaBeta(Environment actual, int jugador, int depth,int profundidad_
 
    if (depth == profundidad_max or actual.JuegoTerminado()){
 
-      return ValoracionTest(actual, jugador);
+      return Valoracion(actual, jugador);
 
    }
 
@@ -114,6 +186,7 @@ double poda_AlfaBeta(Environment actual, int jugador, int depth,int profundidad_
 
    if(actual.JugadorActivo() == jugador){
 
+      //MAX
       return alpha;
 
    }else{

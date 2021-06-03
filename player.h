@@ -8,7 +8,6 @@ class Player{
       Player(int jug);
       Environment::ActionType Think();
       void Perceive(const Environment &env);
-      bool pathFinding(Environment actual, Player jugador, int profundidad,int PROFUNDIDAD_ALFABETA,Environment::ActionType accion, double alpha, double beta);
       int numJugador();
     private:
       int jugador_;

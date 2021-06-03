@@ -4,5 +4,13 @@
 			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {
+		"files.associations": {
+			"*.mak": "makefile",
+			"*.aiml": "xml",
+			"environment.h": "c",
+			"iostream": "cpp",
+			"ostream": "cpp"
+		}
+	}
 }
