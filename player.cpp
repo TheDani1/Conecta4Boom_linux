@@ -57,105 +57,489 @@ double ValoracionTest(const Environment &estado, int jugador)
       return Puntuacion(jugador, estado);
 }
 // ------------------- Los tres metodos anteriores no se pueden modificar
-double diagonalConnect(const Environment &estado, int fila, int columna, int jugador, int conse){
+double diagonalConnect(const Environment &estado, int jugador){
 
-   int total = 0;
+   double resultado_test = 0.0;
 
-	
-	double consecutivas = 0;
+   //TENEMOS 2 CRITERIOS DE EVALUACION HORIZONTAL
 
-	int j = columna;
+   //NUMERO DE FICHAS
+   int nfichas_m = 0;
+   int nfichas_o = 0;
 
-	for (int i=fila; i<7;i++) {
-		if (j > 6)
-			break;
-		else if (estado.See_Casilla(i,j) == jugador)
-			consecutivas += 1;
-		else
-			break;
-		j+=1;
-		
-	}
+   //NUMERO DE FICHAS SEGUIDAS (MINIMO 1)
+   int cons_m = 1;
+   int cons_o = 1;
 
-	if (consecutivas >= conse)
-		total += 1;
+   bool consecucion_o = false;
+   bool consecucion_propia = false;
 
-	consecutivas = 0;
-	j = columna;
-	for (int i=fila; i>=0; i--) {
-		if (j > 6) 
-			break;
-		else if (estado.See_Casilla(i,j) == jugador)
-			consecutivas += 1;
-		else
-			break;
-		j+=1; 
+   //NUMERO DE FICHASv2
+   int nfichas_m2 = 0;
+   int nfichas_o2 = 0;
 
-	}
+   //NUMERO DE FICHAS SEGUIDAS (MINIMO 1)v2
+   int cons_m2 = 1;
+   int cons_o2 = 1;
 
-	if (consecutivas >= conse)
-		total += 1;
+   bool consecucion_o2 = false;
+   bool consecucion_propia2 = false;
 
-	return total;
+   nfichas_o = 0;
+   nfichas_m = 0;
+
+   nfichas_o2 = 0;
+   nfichas_m2 = 0;
+
+   // recorremos las diagonales principales
+
+   for (int i = 0; i < 7; i++){
+
+      // diagonal principal de izquierda a derecha
+      if (estado.See_Casilla(i, i) == jugador || estado.See_Casilla(i, i) == jugador+3){
+         consecucion_o = false;
+         cons_o = 1;
+
+         if (consecucion_propia){
+            cons_m++;
+            nfichas_m += 16 * cons_m;
+         } else {
+            nfichas_m += 8;
+         }
+
+         consecucion_propia = true;
+
+      } else if (estado.See_Casilla(i, i) != 0){
+         consecucion_propia = false;
+         cons_m = 1;
+
+            if (consecucion_o){
+                cons_o++;
+                nfichas_o += 16 * cons_o;
+            } else{
+                nfichas_o += 8;
+            }
+
+            consecucion_o = true;
+
+        } else {
+            cons_o = 1;
+            cons_m = 1;
+            consecucion_propia = false;
+            consecucion_o = false;
+        }
+
+
+
+        // diagonal principal de derecha a izquierda
+
+        if (estado.See_Casilla(6-i, 6-i) == jugador || estado.See_Casilla(6-i, 6-i) == jugador+3){
+            consecucion_o2 = false;
+            nfichas_o2 = 1;
+
+            if (consecucion_propia2){
+                cons_m2++;
+                nfichas_m2 += 16 * cons_m2;
+            } else {
+                nfichas_m2 += 8;
+            }
+
+            consecucion_propia2 = true;
+
+        } else if (estado.See_Casilla(6-i, 6-i) != 0){
+            consecucion_propia2 = false;
+            cons_m2 = 1;
+
+            if (consecucion_o2){
+                nfichas_o2++;
+                nfichas_o2 += 16 * nfichas_o2;
+            } else{
+                nfichas_o2 += 8;
+            }
+
+            consecucion_o2 = true;
+
+        } else {
+            nfichas_o2 = 1;
+            cons_m2 = 1;
+            consecucion_propia2 = false;
+            consecucion_o2 = false;
+        }
+
+        resultado_test -= nfichas_m;
+        resultado_test += nfichas_o;
+
+
+        resultado_test -= nfichas_m2;
+        resultado_test += nfichas_o2;
+
+    }
+
+
+    // diagonal de izquierda a derecha
+    for (int i = 1; i < 4; i++){
+        nfichas_o = 0;
+        nfichas_m = 0;
+
+        nfichas_o2 = 0;
+        nfichas_m2 = 0;
+
+
+        for (int j = 0; j < 7 - i; j++){
+           // parte inferior de la diagonal principal
+            if (estado.See_Casilla(i + j, j) == jugador || estado.See_Casilla(i + j, j) == jugador+3){
+                consecucion_o = false;
+                cons_o = 1;
+
+                if (consecucion_propia){
+                    cons_m++;
+                    nfichas_m += 16 * cons_m;
+                } else {
+                    nfichas_m += 8;
+                }
+
+                consecucion_propia = true;
+
+            } else if (estado.See_Casilla(i + j, j) != 0){
+                consecucion_propia = false;
+                cons_m = 1;
+
+                if (consecucion_o){
+                    cons_o++;
+                    nfichas_o += 16 * cons_o;
+                } else{
+                    nfichas_o += 8;
+                }
+
+                consecucion_o = true;
+
+            } else {
+                cons_o = 1;
+                cons_m = 1;
+                consecucion_propia = false;
+                consecucion_o = false;
+            }
+
+
+
+            // parte superior de la diagonal principal
+
+            if (estado.See_Casilla(j, i + j) == jugador || estado.See_Casilla(j, i + j) == jugador+3){
+                consecucion_o2 = false;
+                nfichas_o2 = 1;
+
+                if (consecucion_propia2){
+                    cons_m2++;
+                    nfichas_m2 += 16 * cons_m2;
+                } else {
+                    nfichas_m2 += 8;
+                }
+
+                consecucion_propia2 = true;
+
+            } else if (estado.See_Casilla(j, i + j) != 0){
+                consecucion_propia2 = false;
+                cons_m2 = 1;
+
+                if (consecucion_o2){
+                    nfichas_o2++;
+                    nfichas_o2 += 16 * nfichas_o2;
+                } else{
+                    nfichas_o2 += 8;
+                }
+
+                consecucion_o2 = true;
+
+            } else {
+                nfichas_o2 = 1;
+                cons_m2 = 1;
+                consecucion_propia2 = false;
+                consecucion_o2 = false;
+            }
+
+
+        }
+
+        resultado_test -= nfichas_m;
+        resultado_test += nfichas_o;
+
+
+        resultado_test -= nfichas_m2;
+        resultado_test += nfichas_o2;
+
+    }
+
+
+
+
+    // diagonal de derecha a izquierda
+    for (int i = 1; i < 4; i++){
+        nfichas_o = 0;
+        nfichas_m = 0;
+
+        nfichas_o2 = 0;
+        nfichas_m2 = 0;
+
+
+        for (int j = 0; j < 7 - i; j++){
+            if (estado.See_Casilla( 6 - i - j, 6 - j) == jugador || estado.See_Casilla( 6 - i - j, 6 - j) == jugador+3){
+                consecucion_o = false;
+                cons_o = 1;
+
+                if (consecucion_propia){
+                    cons_m++;
+                    nfichas_m += 16 * cons_m;
+                } else {
+                    nfichas_m += 8;
+                }
+
+                consecucion_propia = true;
+
+            } else if (estado.See_Casilla(6 - i - j, 6 - j) != 0){
+                consecucion_propia = false;
+                cons_m = 1;
+
+                if (consecucion_o){
+                    cons_o++;
+                    nfichas_o += 16 * cons_o;
+                } else{
+                    nfichas_o += 8;
+                }
+
+                consecucion_o = true;
+
+            } else {
+                cons_o = 1;
+                cons_m = 1;
+                consecucion_propia = false;
+                consecucion_o = false;
+            }
+
+
+
+
+
+            if (estado.See_Casilla( 6 - j, 6 - i - j) == jugador || estado.See_Casilla(6 - j, 6 - i - j) == jugador+3){
+                consecucion_o2 = false;
+                nfichas_o2 = 1;
+
+                if (consecucion_propia2){
+                    cons_m2++;
+                    nfichas_m2 += 16 * cons_m2;
+                } else {
+                    nfichas_m2 += 8;
+                }
+
+                consecucion_propia2 = true;
+
+            } else if (estado.See_Casilla(6 - j, 6 - i - j) != 0){
+                consecucion_propia2 = false;
+                cons_m2 = 1;
+
+                if (consecucion_o2){
+                    nfichas_o2++;
+                    nfichas_o2 += 16 * nfichas_o2;
+                } else{
+                    nfichas_o2 += 8;
+                }
+
+                consecucion_o2 = true;
+
+            } else {
+                nfichas_o2 = 1;
+                cons_m2 = 1;
+                consecucion_propia2 = false;
+                consecucion_o2 = false;
+            }
+
+
+        }
+
+        resultado_test -= nfichas_m;
+        resultado_test += nfichas_o;
+
+
+        resultado_test -= nfichas_m2;
+        resultado_test += nfichas_o2;
+
+    }
+
+
+
+
+    return resultado_test;
 
 }
 
-double horizontalConnect(const Environment &estado, int fila, int columna, int jugador, int conse){
+double horizontalConnect(const Environment &estado, int jugador){
 
-   int consecutivas = 0;
+   double resultado_test;
 
-	for (int j=columna; j<7; j++) {
-		if (estado.See_Casilla(fila,j) == jugador)
-			consecutivas += 1;
-		else
-			break;
-	}
+   //TENEMOS 2 CRITERIOS DE EVALUACION HORIZONTAL
 
-	if (consecutivas >= conse)
-		return 1;
-	else
-		return 0;
+   //NUMERO DE FICHAS
+   int nfichas_m = 0;
+   int nfichas_o = 0;
 
+   //NUMERO DE FICHAS SEGUIDAS (MINIMO 1)
+   int cons_m = 1;
+   int cons_o = 1;
+
+   bool consecucion_o = false;
+   bool consecucion_propia = false;
+
+   for(int i = 0; i < 7; i++){
+
+      nfichas_m = 0;
+      nfichas_o = 0;
+
+      for(int j = 0; i < 7; i++){
+
+         // SI HAY UNA FICHA MIA O UNA BOMBAA
+         if(estado.See_Casilla(i,j) == jugador or estado.See_Casilla(i,j) == jugador+3){
+            consecucion_o = false;
+            cons_o = 1;
+
+            if(consecucion_propia){
+
+               cons_m++;
+               nfichas_m += 10 * cons_m;
+
+            }else{
+
+               nfichas_m += 5;
+
+            }
+
+            consecucion_propia = true;
+
+         }else if(estado.See_Casilla(i,j) != 0){ // si son fichas del oponente hago lo mismo
+            consecucion_propia = false;
+            cons_m = 1;
+
+            if(consecucion_o){
+
+               cons_o++;
+               nfichas_o += 10 * cons_o;
+
+            }else{
+
+               nfichas_o += 5;
+
+            }
+
+            consecucion_o = true;
+
+         }else{ // AQUI NO HAY NINGUNA CASILLA
+
+            cons_m = 1;
+            cons_o = 1;
+            consecucion_o = false;
+            consecucion_propia = false;
+         }
+
+
+      }
+
+      resultado_test -= nfichas_m;
+      resultado_test += nfichas_o;
+
+   }
+
+   return resultado_test;
+   //MAXIMIZAMOS QUE EL OPONENTE TENGA FICHAS
+
+}
+
+double verticalConnect(const Environment &estado, int jugador){
+
+   double resultado_test;
+
+   //TENEMOS 2 CRITERIOS DE EVALUACION HORIZONTAL
+
+   //NUMERO DE FICHAS
+   int nfichas_m = 0;
+   int nfichas_o = 0;
+
+   //NUMERO DE FICHAS SEGUIDAS
+   int cons_m = 0;
+   int cons_o = 0;
+
+   bool consecucion_o = false;
+   bool consecucion_propia = false;
+
+   for(int f = 0; f < 7; f++){
+
+      nfichas_m = 0;
+      nfichas_o = 0;
+
+      for(int c = 0; c < 7; c++){
+
+         if( estado.See_Casilla(c,f) == jugador or estado.See_Casilla(c,f) == jugador+3 ){
+
+            consecucion_o = false;
+            cons_o = 1;
+
+            if(consecucion_propia){
+
+               cons_m;
+               nfichas_m += 10 * cons_m;
+
+            }else{
+
+               nfichas_m += 5;
+
+            }
+
+            consecucion_propia = true;
+
+         }else if(estado.See_Casilla(c,f) != 0){
+
+            consecucion_propia = false;
+            cons_m = 1;
+
+            if(consecucion_o){
+
+               cons_o++;
+               nfichas_o += 10*cons_o;
+
+            }else{
+
+               nfichas_o += 5;
+
+            }
+
+            consecucion_o = true;
+
+         }else{
+
+            cons_m = 1;
+            cons_o = 1;
+            consecucion_o = false;
+            consecucion_propia = false;
+
+         }
+
+      }
+
+      resultado_test -= nfichas_m;
+      resultado_test += nfichas_o;
+
+   }
+
+   return resultado_test;
    
 }
 
-double verticalConnect(const Environment &estado, int fila, int columna, int jugador, int conse){
+double chequeoCompleto(const Environment &estado, int jugador){
 
-   
-	int consecutivas = 0;
+   double total = 0.0;
 
-	for (int i=fila; i<7; i++) {
-		if (estado.See_Casilla(i,columna) == jugador)
-			consecutivas += 1;
-		else
-			break;
-	}
+   total += verticalConnect(estado, jugador);
+   total += horizontalConnect(estado, jugador);
+   total += diagonalConnect(estado, jugador);
 
-	if (consecutivas >= conse)
-		return 1;
-	else
-		return 0;
-
-   
-}
-
-double chequeoCompleto(const Environment &estado, int jugador, int nivel){
-
-   int total = 0;
-
-	for (int i=0; i<7;i++) { 
-		for (int j=0; j<7;j++) { 
-
-			if (estado.See_Casilla(i,j) == jugador) {
-		
-				total += verticalConnect(estado, i, j, jugador, nivel);
-				total += horizontalConnect(estado, i, j, jugador, nivel);
-				total += diagonalConnect(estado, i, j, jugador, nivel);
-			}
-		}
-	}
-
-	return total;
+   return total;
 
 }
 
@@ -166,32 +550,15 @@ double Valoracion(const Environment &estado, int jugador, int depth){
    int ganador = estado.RevisarTablero();
 
    if (ganador == jugador)
-      return 99999999.0 + (10000.0 * depth); // Gana el jugador que pide la valoracion
+      return 99999999.0 - (depth); // Gana el jugador que pide la valoracion
    else if (ganador != 0)
-      return -99999999.0 - (10000.0 * depth); // Pierde el jugador que pide la valoracion
+      return -99999999.0 + (depth); // Pierde el jugador que pide la valoracion
    else if (estado.Get_Casillas_Libres()==0)
             return 0;  // Hay un empate global y se ha rellenado completamente el tablero
     else
 	{
-		
-   int jugador_opuesto = 1;
-	if (jugador == 1) 
-		jugador_opuesto = 2;
 
-	// Comprobamos los adyacentes del jugador actual
-	int compCuatro = chequeoCompleto(estado, jugador, 4);
-	int compTres =  chequeoCompleto(estado, jugador, 3);
-	int compDos =   chequeoCompleto(estado, jugador, 2);
-	
-	// Comprobamos los adyacentes del jugador opuesto
-	int compCuatro_o = chequeoCompleto(estado, jugador_opuesto, 4);
-	int compTres_o =  chequeoCompleto(estado, jugador_opuesto, 3);
-	int compDos_o =   chequeoCompleto(estado, jugador_opuesto, 2);
-
-	// Calculamos el valor heurístico del tablero
-	//return (cuatros*100000 + treses*100 + doses*10);
-	//return (cuatros*100000 + treses*100 + doses*10 + unos);
-	return (((compCuatro*1000000 + compTres*100 + compDos*10) - compCuatro_o*10000000) - compTres_o*100) - compDos_o*10;
+      return chequeoCompleto(estado,jugador);
       
 	}
    
