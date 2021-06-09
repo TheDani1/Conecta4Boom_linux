@@ -270,30 +270,28 @@ double diagonalConnect(const Environment &estado, int jugador){
     }
 
 
+   // diagonal de derecha a izquierda
+   for (int i = 1; i < 4; i++){
+      nfichas_o = 0;
+      nfichas_m = 0;
+
+      nfichas_o2 = 0;
+      nfichas_m2 = 0;
 
 
-    // diagonal de derecha a izquierda
-    for (int i = 1; i < 4; i++){
-        nfichas_o = 0;
-        nfichas_m = 0;
+      for (int j = 0; j < 7 - i; j++){
+         if (estado.See_Casilla( 6 - i - j, 6 - j) == jugador || estado.See_Casilla( 6 - i - j, 6 - j) == jugador+3){
+            consecucion_o = false;
+            cons_o = 1;
 
-        nfichas_o2 = 0;
-        nfichas_m2 = 0;
+            if (consecucion_propia){
+               cons_m++;
+               nfichas_m += 32 * cons_m;
+            } else {
+               nfichas_m += 16;
+            }
 
-
-        for (int j = 0; j < 7 - i; j++){
-            if (estado.See_Casilla( 6 - i - j, 6 - j) == jugador || estado.See_Casilla( 6 - i - j, 6 - j) == jugador+3){
-                consecucion_o = false;
-                cons_o = 1;
-
-                if (consecucion_propia){
-                    cons_m++;
-                    nfichas_m += 16 * cons_m;
-                } else {
-                    nfichas_m += 8;
-                }
-
-                consecucion_propia = true;
+            consecucion_propia = true;
 
             } else if (estado.See_Casilla(6 - i - j, 6 - j) != 0){
                 consecucion_propia = false;
@@ -301,9 +299,9 @@ double diagonalConnect(const Environment &estado, int jugador){
 
                 if (consecucion_o){
                     cons_o++;
-                    nfichas_o += 16 * cons_o;
+                    nfichas_o += 32 * cons_o;
                 } else{
-                    nfichas_o += 8;
+                    nfichas_o += 16;
                 }
 
                 consecucion_o = true;
@@ -695,7 +693,6 @@ Environment::ActionType Player::Think()
    // NOTA: La parametrizacion es solo orientativa
    valor = poda_AlfaBeta(actual_, jugador_, 0, PROFUNDIDAD_ALFABETA, accion, menosinf, masinf);
    cout << "Valor MiniMax: " << valor << "  Accion: " << actual_.ActionStr(accion) << endl;
-
 
 
    return accion;
